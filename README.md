@@ -9,7 +9,8 @@ In the code for this task, the scikit-learn library’s functions, `NearestNeigh
 
 The Canberra distance between vectors a and b, as stated by Surya, V. B et al (2019), is a weighted version of the Manhattan distance and is calculated as follows:
 
-$$ CanberraDistance(a,b) = \sum \limits_{i=1}^{n} \frac{\mid{a_{i}-b_{i}\mid}}{\mid{a_i}\mid+\mid{b_i}\mid}$$
+<img src="pics_/canberra_dist.png" height=100>
+
 
 It is the absolute difference of the values of vector a and b divided by the individual absolutes of the values of vector a and b summed.
 
@@ -25,12 +26,8 @@ With regards to wrangling the data, with both the train and test, we begin by cr
 ### Pre-processing and K-NN fitting
 Using the weighted movie rating formula, 
 
-$$ Weighted Rating = \frac{Rv+Cm}{v+m} $$
+<img src="pics_/weighted_rate.png" height=150>
 
-$R =$ average rating for the movie (mean)  
-$v =$ number of votes/ratings for the movie  
-$m =$ threshold/minimum vote no. (this is to prevent assigning movies with 1 rating of 5 a total score of 5/5).  
-$c =$ the mean rating across the whole data set 
 
 inspired by the IMDB rating formula stated on help.imdb.com (2019). The arbitrary threshold,  'm',   is assigned to be the Q1, 1st quartile, of votes. This rating formula breaks down movie ratings into two components, the movie’s average rating and the average rating over the whole dataset, these components are then weighted by the ratio of votes over the sum of votes and the threshold value, and the ratio of the threshold over the sum of threshold value and votes respectively. Therefore ratings with fewer votes are penalized and ratings will skew towards the average over the whole data set. This defends against rating movies with 1 vote of 5stars to a movie rating of 5.
 
@@ -49,10 +46,14 @@ For accuracy testing we calculate the differences between the actual ratings ass
 
 Finally, in order to find the optimal k value/number of neighbours such that to minimize the MAE, as briefly mentioned in the ‘Data wrangling, train-test split and cross validation’ section, we create an outer loop in which we loop through values of K within a range of 1 to 100. Within this range and for each value of K the entire code explained above will run, i.e. the data wrangling, pre-processing, K-NN fitting and accuracy testing, for each fold of cross validation, the MAEs for each K value are stored in a numpy array, then by using `numpy.argmin + 1` we are able to retrieve the k value which minimizes the MAE. The minimizing k value was found to be K = 9 which resulted in a MAE = 0.78198.
 
+<img src="pics_/MAE_Cross_Validation.png" height=400>
+
 Note that up until K = 9 we see great changes/improvements in the accuracy of the model this is because below K = 9 the model is not including certain neighbours which are also strongly correlated and provide additional ratings. However for values 9 < K < 38 we see a trend of MAE increasing with the value of K, this is due to the addition of more neighbours diluting the correlations as the nearest neighbours are more strongly correlated with the target user, whilst less near neighbours are less correlated. After K=38 we then see a random walk like behaviour in the MAE. 
 
 ### Inclusion of other features
 Finally, we also test the model with the inclusion of more user features. The gender and occupation feature are converted to a gender dummy vector and the occupation feature converted to 21 occupation dummy vectors, whilst the age feature is left as is. We run the code on all different possible combinations of the 3 chosen features as well as including them individually. The inclusion of solely the age feature improves the accuracy the most (K = 7, MAE = 0.78122), and the combination of gender and age makes the second largest accuracy improvement (K = 9, 0.7812300000000001). Inclusion of all features improve accuracy of the model with K > 15.
+
+<img src="pics_/MAE_Cross_Validation_with_add_features.png" height=400>
 
 ## Bibliography:
 Chomboon, K., Pasapichi, C., Pongsakorn, T., Kerdprasop, K., Kerdprasop, N. (2015), An empirical study of distance metrics for k-nearest neighbor algorithm, In The 3rd International Conference on Industrial Application Engineering 2015.
